@@ -2,24 +2,115 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>🎆 Happy B'Diwali</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Happy 🎁 B'Diwali</title>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <h1>🎇 Happy B'Diwali 🎆</h1>
-  <p>May your Diwali be full of light ✨, sweets 🍬, and joy 🎉</p>
+  <style>
+    body {
+      margin: 0;
+      background: #020202;
+      cursor: crosshair;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
 
+    canvas {
+      display: block;
+    }
+
+    h1 {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ffea00;
+      font-family: 'Pacifico', cursive;
+      font-size: clamp(2.5em, 10vw, 5em);
+      font-weight: 400;
+      text-shadow: 0 0 20px rgba(255, 0, 0, 0.86);
+      -webkit-user-select: none;
+      user-select: none;
+      text-align: center;
+    }
+
+    p {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ffffffa2;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1em, 4vw, 1.5em);
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px rgb(255, 238, 0);
+      -webkit-user-select: none;
+      user-select: none;
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 3s ease-in-out 1s forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Happy 🎁 B'Diwali</h1>
+  <p>Wishing you a day filled with 🍰 food 🍲 and 💰 money 💸</p>
+
+  <!-- Canvas for fireworks -->
   <canvas id="birthday"></canvas>
 
+  <!-- Firework sound (hidden) -->
   <audio id="firework-sound" src="firework.mp3" preload="auto"></audio>
 
-  <script src="script.js"></script>
-</body>
-</html>
+  <script>
+    const PI2 = Math.PI * 2;
+    const random = (min, max) => (Math.random() * (max - min + 1) + min) | 0;
+    const timestamp = () => new Date().getTime();
+
+    const fireworkSound = document.getElementById("firework-sound");
+    fireworkSound.volume = 0.5;
+
+    class Birthday {
+      constructor() {
+        this.resize();
+        this.fireworks = [];
+        this.counter = 0;
+      }
+
+      resize() {
+        this.width = canvas.width = window.innerWidth * devicePixelRatio;
+        this.height = canvas.height = window.innerHeight * devicePixelRatio;
+        ctx.scale(devicePixelRatio, devicePixelRatio);
+
+        let center = (this.width / 2) / devicePixelRatio | 0;
+        this.spawnA = center - (center / 4) | 0;
+        this.spawnB = center + (center / 4) | 0;
+        this.spawnC = this.height * 0.1 / devicePixelRatio;
+        this.spawnD = this.height * 0.5 / devicePixelRatio;
+      }
+
+      onClick(evt) {
+        if (fireworkSound) {
+          fireworkSound.currentTime = 0;
+          fireworkSound.play().catch(() => {});
+        }
+
+        let touch = evt.touches ? evt.touches[0] : evt;
+        let x = touch.clientX;
+        let y = touch.clientY;
+        let count = random(3, 5);
